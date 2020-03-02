@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>三门问题</title>
+	</head>
+	<body>
+		总共进行<span id="count"></span>次试验</br>
+		其中<span class="halfCount"></span>次都选择换，结果抽中的概率为:<span id="changeEl"></span></br>
+		其中<span class="halfCount"></span>次都选择不换，结果抽中的概率为:<span id="noChangeEl"></span></br>
+		
+		<script type="text/javascript">
+			//生成min到max之间的随机整数
+			function randomInt(min,max){
+				return Math.floor(Math.random()*(max-min+1));
+			}
+			
+			function game(ifChange){
+				const prize=randomInt(0,2);   //奖品
+				let custSelect=randomInt(0,2);   //玩家的第一次选择
+				let hostSelect;   //主持人的选择
+				//主持人会选中没有奖品的门
+				if(custSelect==prize){
+					hostSelect=[0,1,2].find(item=>item!=prize);
+				}
+				else{
+					hostSelect=[0,1,2].find(item=>item!=prize&&item!=custSelect);
+				}
+				
+				//是否更换选择
+				if(ifChange){    //更换选择
+					custSelect=[0,1,2].find(item=>item!=hostSelect&&item!=custSelect);
+				}
+				return custSelect==prize;   //返回是否中奖
+			}
+			
+			const gameCount=3000;
+			document.querySelector("#count").innerText=gameCount*2;
+			const countHalf=document.querySelectorAll(".halfCount");
+			for(var i=0; i<countHalf.length; i++){
+				countHalf[i].innerText=gameCount;
+			}
+			
+			let changeCount=0;   //换之后的中奖次数
+			let notChangeCount=0;   //坚持原来的选择的中奖次数
+			for(let i=0; i<gameCount; i++){
+				if(game(true)){
+					changeCount++;
+				}
+				if(game(false)){
+					notChangeCount++;
+				}
+			}
+			
+			document.querySelector("#changeEl").innerText=changeCount/gameCount;
+			document.querySelector("#noChangeEl").innerText=notChangeCount/gameCount;
+			
+		</script>
+	</body>
+</html>

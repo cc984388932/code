@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+    	*{
+    		margin: 0;
+    		padding: 0;
+    	}
+    	canvas{
+    		display: block;
+    		width: 700px;
+    		height: 300px;
+    		border: 1px solid black;
+    		background: pink;
+    	}
+    </style>
+</head>
+<body>
+	<img id="img" src="img/anit.png" style="width: 300px;"/>
+	<canvas id="canvas" width="700" height="300"></canvas>
+	
+	<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/animPerson.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/game.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		new Game();   //这里面不使用onload是因为这会儿onload不起效  也不知道为什么，正常是要加的
+	</script>
+</body>
+</html>

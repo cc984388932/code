@@ -1,0 +1,62 @@
+<html>
+	<head>
+		<title>上拉显示更多内容，类似高德地图首页</title>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<style type="text/css">
+			#shadowBox{
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				z-index: 19930427;
+				background: black;
+				opacity: 0;
+			}
+			#contBox{
+				width: 100%;
+				height: 10%;
+				position: absolute;
+				top: 90%;
+				left: 0;
+				z-index: 19930428;
+				overflow: auto;
+				background: white;
+			}
+		</style>
+	</head>
+	<body>
+		该插件只适用于移动端，不支持PC端
+		
+		
+		<div id="shadowBox"></div>
+		<div id="contBox">
+			<!--这里放任何想放的内容-->
+			<div style="height: 150px;background: red;">上滑这个红色块试试</div>
+			<div style="height: 150px;background: orange;"></div>
+			<div style="height: 150px;background: yellow;"></div>
+			<div style="height: 150px;background: green;"></div>
+			<div style="height: 150px;background: blue;"></div>
+			<div style="height: 150px;background: purple;"></div>
+		</div>
+			
+		<script src="index.js" type="text/javascript" charset="utf-8"></script>
+		
+		<script type="text/javascript">
+			var touch=new Touch({
+				contEl:document.getElementById("shadowBox"),   //背景灰色浮层
+				shadowEl:document.getElementById("contBox"),    //内容块
+				top:0.1,   //内容块停留的最高处 (取值范围：0.1-1,默认0.1)
+				bottom:0.9,   //内容块停留的最低处 (取值范围：0.1-1,默认0.9)
+				opacity:0.5,   //背景灰色浮层的最高透明值 (取值范围：0.1-1,默认0.5)
+				duration:0.3   //松手时候下滑或上滑动画的持续时间 (单位：秒,默认0.3)
+			});
+			
+			document.body.onclick=function(){
+				console.log(123);
+				touch.slideToBottom();
+			};
+		</script>
+	</body>
+</html>

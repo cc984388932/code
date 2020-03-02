@@ -1,0 +1,122 @@
+<html>
+	<head>
+		<title>普利姆算法与A*算法</title>
+		<meta charset="UTF-8"/>
+		<style type="text/css">
+			#showBox{
+				width: 1000px;
+				overflow: auto;
+				margin-top: 30px;
+			}
+			#map span{
+				display: inline-block;
+				width: 15px;
+				height: 15px;
+				line-height: 15px;
+				text-align: center;
+				color: red;
+				vertical-align: middle;
+			}
+			.white{
+				background: white;
+			}
+			.black{
+				background: black;
+			}
+		</style>
+	</head>
+	<body>
+		迷宫行数量：<input type="number" id="row" value="" placeholder="请输入5到30之间的数字" />
+		迷宫列数量：<input type="number" id="col" value="" placeholder="请输入5到30之间的数字" />
+		<button id="createMaze">点击重新生成迷宫</button>
+		<button id="findRoad">点击寻找迷宫通路</button>
+		<div id="showBox">
+			<div id="map"></div>
+		</div>
+		
+		
+		<script src="maze.js" type="text/javascript" charset="utf-8"></script>
+		<script src="Astar.js" type="text/javascript" charset="utf-8"></script>
+		
+		
+		<script type="text/javascript">
+			function Game(){
+				this.init();
+				this.bindEvent();
+			}
+			Game.prototype={
+				constructor:Game,
+				init:function(){
+					//普利姆算法生成迷宫
+					this.maze=new Maze({
+						r:this.randomInt(15,30),   //行
+						c:this.randomInt(15,30),    //列
+					});
+					this.mazeArr=this.maze.getMaze();
+					this.draw(this.mazeArr);
+					//A*算法寻路
+					this.astar=new Astar();
+				},
+				draw:function(arr,resultArr){   //绘制迷宫图
+					var arr=JSON.parse(JSON.stringify(arr));
+					if(resultArr){
+						for(var i=0; i<resultArr.length; i++){
+							arr[resultArr[i].y][resultArr[i].x]=2;
+						}
+					}
+					var html="";
+					for(var i=0; i<arr.length; i++){
+						for(var j=0; j<arr[i].length; j++){
+							switch (arr[i][j]){
+								case 0:
+									html+="<span class='white'></span>"; break;
+								case 1:
+									html+="<span class='black'></span>"; break;
+								default:
+									html+="<span class='white'>1</span>"; break;
+							}
+						}
+						html+="</br>";
+					}
+					document.getElementById("map").innerHTML=html;
+				},
+				bindEvent:function(){
+					var _this=this;
+					//点击生成迷宫
+					document.getElementById("createMaze").onclick=function(){
+						var row=document.getElementById("row").value;
+						var col=document.getElementById("col").value;
+						
+						if(row.search(/[^\d]/)!=-1||col.search(/[^\d]/)!=-1){
+							alert("请输入5到30之间的数字");
+							return;
+						}
+						row=parseInt(row);
+						col=parseInt(col);
+						if(row<5||row>30||col<5||col>30){
+							alert("请输入5到30之间的数字");
+							return;
+						}
+						_this.mazeArr=_this.maze.reset({
+							r:row ? row : _this.randomInt(13,19),   //行
+							c:col ? col : _this.randomInt(15,25),    //列
+						});
+						_this.draw(_this.mazeArr);
+					}
+					
+					//点击寻找迷宫通路
+					document.getElementById("findRoad").onclick=function(){
+						var farr=_this.astar.start(_this.mazeArr);
+						_this.draw(_this.mazeArr,farr)
+					}
+				},
+				randomInt:function(min,max){
+					return Math.floor((max-min+1)*Math.random())+min;
+				}
+			}
+			
+			new Game();
+			
+		</script>
+	</body>
+</html>

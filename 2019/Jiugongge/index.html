@@ -1,0 +1,65 @@
+<html>
+	<head>
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			li{
+				list-style: none;
+			}
+			.jiuGongGe{
+				width: 300px;
+				margin: 0 auto;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: space-between;
+				position: relative;
+			}
+			.jiuGongGe li{
+				width: 30%;
+				border: 1px solid black;
+				text-align: center;
+				height: 50px;
+				line-height: 50px;
+				margin-top: 20px;
+			}
+			.jiuGongGe li.active{
+				background: green;
+				color: white;
+			}
+		</style>
+	</head>
+	
+<body>
+	<div>
+		<ul class="jiuGongGe" id="jiuGongGe">
+			<li class="active">0</li>
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+			<li id="jiuGongGeStart">开始抽奖</li>
+			<li>4</li>
+			<li>5</li>
+			<li>6</li>
+			<li>7</li>
+		</ul>
+	</div>
+	
+	<script src="index.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var jiuGongGe=new JiuGongGe({
+			backFunc:function(result){   //游戏结束之后的回调函数
+				console.log(result);
+			}
+		});
+		document.getElementById("jiuGongGeStart").onclick=function(){
+			jiuGongGe.start(6);   //游戏开始的方法，接收一个参数：最后停留的位置，顺时针计
+		}
+	</script>
+</body>
+
+
+</html>

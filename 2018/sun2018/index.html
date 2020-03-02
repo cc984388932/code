@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>太阳系</title>
+		<link rel="stylesheet" type="text/css" href="index.css"/>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+		<section class="desc" style="display: none;">
+			<h1>缩放比例</h1>
+			<ul>
+				<li>直径：*1000(km) 地球(12px*1000=12000km)</li>
+				<li>距日距离：/100(AU) 地球(100px/100=1AU)</li>
+				<li>周期：*5(一个时间单位) 地球(73个时间单位)*5=365个地球日</li>
+			</ul>
+			<p>太阳的直径是乱给的，大概是地球的100倍，外面行星数量也是乱给的，还有个木星在屏幕外，距太阳5AU</p>
+		</section>		
+		
+		
+		<script src="planet.js" type="text/javascript" charset="utf-8"></script>
+		<script src="sun.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<title>音乐波形图</title>
+</head>
+<style type="text/css">
+ *{
+ 	margin:0px;padding:0px;
+ 	}
+ 	body{
+ 		background: black;
+ 	}
+ 	li{
+ 		list-style: none;
+ 	}
+ #cav{
+   border-radius:4px;
+   margin:10px auto;
+   width: 1024px;
+   height: 600px;
+   display: block;
+ }
+ #author{
+ 	position: fixed;
+ 	top: 30px;
+ 	right: 30px;
+ 	font-size: 20px;
+ 	color: white;
+ }
+ .btnBox{
+ 	display: flex;
+ 	justify-content: space-between;
+ 	position: absolute;
+ 	bottom: 20px;
+ 	left: 50%;
+ 	transform: translateX(-50%);
+ }
+ .btnBox li{
+  	margin: 0 20px;
+  	padding: 0 10px;
+ 	color: white;
+ 	line-height: 40px;
+ 	font-size: 20px;
+ 	cursor: pointer;
+  }
+  @keyframes thanks{
+  	from{
+  		transform: translate(-50%,-50%) scale(0,0);
+  	}
+  	to{
+  		transform: translate(-50%,-50%) scale(1,1);
+  	}
+  }
+  #thanks{
+  	text-align: center;
+  	font-size: 60px;
+  	line-height: 60px;
+  	color: white;
+  	position: absolute;
+  	top: 40%;
+  	left: 50%;
+  	transform: translate(-50%,-50%);
+  	display: none;
+  	animation: thanks 1s;
+  }
+  #thanks span{
+  	font-size: 20px;
+  }
+  .notPC{
+  	color: white;
+  	text-align: center;
+  	font-size: 24px;
+  	line-height: 40px;
+  	position: absolute;
+  	top: 50%;
+  	left: 50%;
+  	transform: translate(-50%,-50%);
+  }
+  #shape{
+  	position: fixed;
+ 	top: 30px;
+ 	left: 30px;
+ 	font-size: 16px;
+ 	height: 30px;
+ 	line-height: 30px;
+ 	border: none;
+  }
+  
+</style>
+<body style="display: none;">
+	<!--BetweenWorlds-->
+	<audio id="myaudio" src="" autoplay="autoplay"></audio>
+	<canvas id="cav"></canvas>
+	<div id="thanks">thanks for listening</br><span>点击开始以重新播放 (支付宝口令红包：六个六开红包)</span></div>
+	
+	<select id="shape">
+		<option value="0">柱状图</option>
+		<option value="1">线性波形图</option>
+		<option value="2">填充波形图</option>
+	</select>
+	
+	<ul class="btnBox">
+		<li id="prev">上一曲</li>
+		<li id="start">开始</li>
+		<li id="pause">暂停</li>
+		<li id="next">下一曲</li>
+	</ul>s
+	
+	<section id="author">
+		music：<span></span>
+	</section>
+</body>
+<script charset="utf-8" src="js/jquery.js"></script>
+<script src="js/drawCanvas.js" type="text/javascript" charset="utf-8"></script>
+<script charset="utf-8"> 
+	var main;
+	var drawCanvas;
+	
+	
+	function Main(){
+		this.musicArr=[
+			{id:"millionPos",name:"一百万个可能"},
+		];
+		this.musicIndex=0;
+		this.init();
+		this.audio();
+		this.control();
+	}
+	Main.prototype={
+		constructor:Main,
+		init:function(){
+			this.changeMusic();
+		},
+		audio:function(){
+			var context = new AudioContext;
+			var media = context.createMediaElementSource(myaudio);   //从元素创建媒体节点
+			var processor = context.createScriptProcessor(1024, 1, 1);   //创建脚本处理节点
+			//连接：媒体节点→控制节点→输出源
+			media.connect(processor);
+			processor.connect(context.destination);
+			//控制节点的过程处理
+			processor.onaudioprocess = function(e) {
+				//获取输入和输出的数据缓冲区
+				var input = e.inputBuffer.getChannelData(0);
+				var output = e.outputBuffer.getChannelData(0);
+				//将输入数缓冲复制到输出缓冲上
+				for(var i = 0; i < input.length; i++){
+					output[i] = input[i];
+				}
+				drawCanvas.carryFunc(output);
+			};
+		},
+		control:function(){
+			var _this=this;
+			var endTimeout;
+			myaudio.onended=function(){
+				$("#cav").hide();
+				endTimeout=setTimeout(function(){
+					//$("#thanks").show();
+					_this.next();
+				},500);
+			}
+			$("#start").click(function(){
+				$("#myaudio")[0].play();
+				_this.showCanvas();
+				clearTimeout(endTimeout);
+			})
+			
+			$("#pause").click(function(){
+				$("#myaudio")[0].pause();
+			})
+			
+			$("#next").click(function(){
+				_this.next();
+			})
+			
+			$("#prev").click(function(){
+				_this.prev();
+			})
+		},
+		changeMusic:function(){
+			myaudio.src="music/"+this.musicArr[this.musicIndex].id+".mp3";
+			$("#author span").text(this.musicArr[this.musicIndex].name)
+		},
+		showCanvas:function(){
+			$("#cav").show();
+			$("#thanks").hide();
+		},
+		next:function(){
+			this.musicIndex++;
+			if(this.musicIndex>=this.musicArr.length){
+				this.musicIndex=0;
+			}
+			this.changeMusic();
+			this.showCanvas();
+		},
+		prev:function(){
+			this.musicIndex--;
+			if(this.musicIndex<=0){
+				this.musicIndex=this.musicArr.length-1;
+			}
+			this.changeMusic();
+			this.showCanvas();
+		}
+	}
+	
+	$(function(){
+		$("body").show();
+		if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {   //移动端
+			$("body").html("<div class='notPC'>请使用电脑打开</br>不要用手机~~</div>");
+	    	return;
+		}
+		drawCanvas=new DrawCanvas();
+		main=new Main();
+		
+	})
+		
+	
+	
+</script>
+</html>
