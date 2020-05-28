@@ -68,6 +68,19 @@
   #thanks span{
   	font-size: 20px;
   }
+  #startText{
+	width: 100%;
+  	text-align: center;
+  	font-size: 40px;
+  	line-height: 60px;
+  	color: white;
+  	position: absolute;
+  	top: 40%;
+  	left: 50%;
+  	transform: translate(-50%,-50%);
+  	display: none;
+  	animation: thanks 1s;
+  }
   .notPC{
   	color: white;
   	text-align: center;
@@ -91,13 +104,14 @@
 </style>
 <body style="display: none;">
 	<!--BetweenWorlds-->
-	<audio id="myaudio" src="" autoplay="autoplay"></audio>
+	<audio id="myaudio" src=""></audio>
 	<canvas id="cav"></canvas>
-	<div id="thanks">thanks for listening</br><span>点击开始以重新播放 (支付宝口令红包：六个六开红包)</span></div>
+	<div id="thanks">thanks for listening</br><span>点击开始以重新播放 </span></div>
+	<div id="startText" style="display: block;">由于浏览器不允许自动播放音乐，</br>所以点击下方开始按钮以播放音乐</div>
 	
 	<select id="shape">
-		<option value="0">柱状图</option>
 		<option value="1">线性波形图</option>
+		<option value="0">柱状图</option>
 		<option value="2">填充波形图</option>
 	</select>
 	
@@ -121,11 +135,13 @@
 	
 	function Main(){
 		this.musicArr=[
+			{id:"LastoftheWilds",name:"Last of the Wilds"},
+			{id:"kanon",name:"卡农"},
 			{id:"millionPos",name:"一百万个可能"},
 		];
 		this.musicIndex=0;
+		this.ifStart = false;   //判断用户是否点击开始，只有用户手动点击才能播放音频
 		this.init();
-		this.audio();
 		this.control();
 	}
 	Main.prototype={
@@ -134,6 +150,7 @@
 			this.changeMusic();
 		},
 		audio:function(){
+			var _this = this;
 			var context = new AudioContext;
 			var media = context.createMediaElementSource(myaudio);   //从元素创建媒体节点
 			var processor = context.createScriptProcessor(1024, 1, 1);   //创建脚本处理节点
@@ -150,6 +167,7 @@
 					output[i] = input[i];
 				}
 				drawCanvas.carryFunc(output);
+				
 			};
 		},
 		control:function(){
@@ -163,6 +181,12 @@
 				},500);
 			}
 			$("#start").click(function(){
+				if (!_this.ifStart) {
+					_this.ifStart = true;
+					_this.audio();
+					$('#myaudio').prop('autoplay', true);
+					$('#startText').hide();
+				}
 				$("#myaudio")[0].play();
 				_this.showCanvas();
 				clearTimeout(endTimeout);
